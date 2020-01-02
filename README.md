@@ -5,4 +5,10 @@
      | |___| |__| | | \ \| |____  
       \_____\____/|_|  \_\______| 
 
-first!
+[![Build Status](https://travis-ci.com/strangesast/core.svg?branch=master)](https://travis-ci.com/strangesast/core)
+[![Coverage Status](https://coveralls.io/repos/github/strangesast/core/badge.svg)](https://coveralls.io/github/strangesast/core)
+- [ ] Timeclock
+- [ ] Users
+- [ ] Work orders / parts
+- [ ] Station Kiosk
+- [ ] Work Scheduling
