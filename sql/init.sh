@@ -2,11 +2,11 @@
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-  CREATE DATABASE development;
-  GRANT ALL PRIVILEGES ON DATABASE development TO postgres;
+  CREATE DATABASE production;
+  GRANT ALL PRIVILEGES ON DATABASE production TO postgres;
 EOSQL
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "development" <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "production" <<-EOSQL
   CREATE EXTENSION pgcrypto;
   
   CREATE TABLE roles (
@@ -213,7 +213,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "development" <<-EO
   ) t
   where property = 'execution';
 
-  select
+  create view machine_part_count as select
     machine_id,
     property,
     value,

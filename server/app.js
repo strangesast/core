@@ -22,10 +22,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/', indexRouter);
-app.use(authRouter);
-app.use('/data', dataRouter);
-app.use('/users', usersRouter);
+const base = express.Router();
+base.use('/', indexRouter);
+base.use(authRouter);
+base.use('/data', dataRouter);
+base.use('/users', usersRouter);
+app.use('/api', base);
 
 var connectionString = config.get('postgres.connectionString');
 app.locals.db = new Pool({connectionString});
