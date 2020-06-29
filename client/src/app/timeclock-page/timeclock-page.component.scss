@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  // max-width: 800px;
+}
+
+:host app-timeclock-staggered {
+  flex: 1 1 auto;
+}
+
+form {
+  display: flex;
+  flex-direction: row;
+  & > *:not(:first-child) {
+    margin-left: 8px;
+  }
+}
+
+h1 {
+  font-weight: 800;
+  font-size: 50px;
+}

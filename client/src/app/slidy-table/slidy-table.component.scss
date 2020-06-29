@@ -1,0 +1,152 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mat-table, .mat-table tr {
+  background: white;
+}
+
+.container {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.table-container, table {
+  min-width: 100%;
+}
+
+table {
+  table-layout:fixed
+}
+
+.mat-column-name {
+  white-space: nowrap;
+  width: 140px;
+  a {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.mat-column-total,
+.mat-column-start,
+.mat-column-stop {
+  min-width: 92px;
+  width: 92px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.mat-column-name,
+.mat-column-total {
+  padding: 0 8px;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-row-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-row-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-row-row td {
+  border-bottom-width: 0;
+}
+
+.example-row-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.detail {
+  overflow: hidden;
+  height: 100px;
+
+  display: flex;
+  align-items: center;
+
+  .days {
+    display: flex;
+    .day {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+
+      .label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        & > *:last-child {
+          font-size: 0.8em;
+        }
+      }
+    }
+  }
+}
+
+.example-row-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: 104px;
+}
+
+.example-row-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.example-row-description {
+  padding: 16px;
+}
+
+.example-row-description-attribution {
+  opacity: 0.5;
+}
+
+.header-blocks, .blocks {
+  position: relative;
+
+  & > span {
+    position: absolute;
+  }
+
+}
+
+
+.pill {
+  display: block;
+  border-radius: 8px;
+  &.vert {
+    width: 24px;
+  }
+  &.hor {
+    height: 24px;
+  }
+}
+
+.blocks {
+  position: relative;
+  height: 40px;
+  box-sizing: border-box;
+  & > span {
+    top: 8px;
+    height: 24px;
+    border-radius: 8px;
+  }
+}
