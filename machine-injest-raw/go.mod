@@ -1,4 +1,4 @@
-module github.com/strangesast/core/serial-monitoring
+module github.com/strangesast/core/machine-injest-raw
 
 go 1.14
 

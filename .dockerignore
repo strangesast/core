@@ -1,11 +1,10 @@
-timeclock-vis/docker
 .git
 docker-compose.yml
+timeclock-vis/docker
 **/Dockerfile
 **/env/
 **/node_modules
 **/__pycache__
 **/*.pyc
-monitoring/monitoring
 docker/
-serial-monitoring-processor/build
+kafka-streams/build

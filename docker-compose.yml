@@ -139,7 +139,7 @@ services:
     ports:
       - "80:80"
 
-  graphql-engine:
+  graphql:
     image: hasura/graphql-engine:latest
     depends_on:
     - "postgres"

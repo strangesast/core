@@ -1,6 +1,1 @@
-protoc/
-proto/
-mongodb/
-kafka/
-env/
-output.txt
+machine-injest-raw
