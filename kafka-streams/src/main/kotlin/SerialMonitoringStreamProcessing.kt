@@ -23,7 +23,7 @@ fun main() {
     val logger = LoggerFactory.getLogger("streams")
 
     val props = Properties()
-    props[StreamsConfig.APPLICATION_ID_CONFIG] = System.getenv("STREAMS_APPLICATION_ID") ?: "streams-monitoring"
+    props[StreamsConfig.APPLICATION_ID_CONFIG] = System.getenv("STREAMS_APPLICATION_ID") ?: "alt-streams-monitoring"
     props[StreamsConfig.BOOTSTRAP_SERVERS_CONFIG] = System.getenv("KAFKA_HOSTS") ?: "kafka:9092"
     props[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.ByteArray().javaClass
     props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.ByteArray().javaClass
@@ -200,6 +200,7 @@ class SampleTransformer : Transformer<String, String, Iterable<KeyValue<String, 
     override fun init(context: ProcessorContext) {
         this.context = context
     }
+
     override fun transform(
             key: String?,
             value: String
@@ -226,4 +227,4 @@ class SampleTransformer : Transformer<String, String, Iterable<KeyValue<String, 
 
     override fun close() {
     }
-
+}
