@@ -1,6 +1,0 @@
-protoc/
-proto/
-mongodb/
-kafka/
-env/
-output.txt
