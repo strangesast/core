@@ -8,3 +8,5 @@ timeclock-vis/docker
 **/*.pyc
 docker/
 kafka-streams/build
+kafka-streams/gradle
+kafka-streams/gradlew*
