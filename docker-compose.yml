@@ -1,133 +1,157 @@
 version: '3.7'
 services:
-#  zookeeper:
-#    image: wurstmeister/zookeeper
-#    ports:
-#      - "2181:2181"
-#  kafka:
-#    image: wurstmeister/kafka
-#    ports:
-#      - "9092:9092"
-#    environment:
-#      KAFKA_CREATE_TOPICS: "input:1:1"
-#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-##      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9093
-##      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://localhost:9093
-##      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-##      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-#      KAFKA_CREATE_TOPICS: "input:1:1,input-text:1:1"
-#      KAFKA_ADVERTISED_HOST_NAME: kafka
-#      KAFKA_ADVERTISED_PORT: 9092
-#    restart: always
-#    volumes:
-#      - kafka_data:/kafka
+  zookeeper:
+    image: wurstmeister/zookeeper
+    restart: always
 
-#  # connect kafka to postgres
+  kafka:
+    image: wurstmeister/kafka
+    restart: always
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "input-text:5:1"
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9092
+    volumes:
+      - kafka_data:/kafka
+
   connect:
     image: strangesast/core_connect
-    network_mode: "host"
+    restart: always
     build:
       context: kafka/connect
 
-#  # facilitate timeclock polling
-#  celery:
-#    image: python:3
-#
-
-  # read machine data
   kafka-streams:
     image: strangesast/core_kafka-streams
-    network_mode: "host"
+    restart: always
     build:
       context: kafka/streams
     environment:
       - KAFKA_HOSTS=kafka:9092
       - STREAMS_APPLICATION_ID=streams-monitoring
 
-#  connector0:
-#    image: strangesast/core_connector
-#    build:
-#      context: machines
-#      dockerfile: machines/Dockerfile
-#    environment:
-#      - MACHINE_ID=hardinge-gx1600
-#      - KAFKA_HOSTS=kafka:9092
-#      - ADAPTER_HOST=10.0.0.101:7878
-#    restart: always
-#    depends_on:
-#      - 'kafka'
-#
-#  connector1:
-#    image: strangesast/core_connector
-#    build:
-#      context: machines
-#      dockerfile: machines/Dockerfile
-#    environment:
-#      - MACHINE_ID=samsung-sl45
-#      - KAFKA_HOSTS=kafka:9092
-#      - ADAPTER_HOST=10.0.0.101:7879
-#    restart: always
-#    depends_on:
-#      - 'kafka'
-#
-#  connector2:
-#    image: strangesast/core_connector
-#    build:
-#      context: machines
-#      dockerfile: machines/Dockerfile
-#    environment:
-#      - MACHINE_ID=doosan-2600sy
-#      - KAFKA_HOSTS=kafka:9092
-#      - ADAPTER_HOST=10.0.0.101:7880
-#    restart: always
-#    depends_on:
-#      - 'kafka'
-#
-#  connector3:
-#    image: strangesast/core_connector
-#    build:
-#      context: machines
-#      dockerfile: machines/Dockerfile
-#    environment:
-#      - MACHINE_ID=doosan-gt2100m
-#      - KAFKA_HOSTS=kafka:9092
-#      - ADAPTER_HOST=10.0.0.101:7881
-#    restart: always
-#    depends_on:
-#      - 'kafka'
-#
-## authentication & authorization server
-#  server:
-#    image: strangesast/core_server
-#    build:
-#      context: server
-#      dockerfile: server/Dockerfile
-#    ports:
-#      - "3001:80"
-#    environment:
-#      NODE_CONFIG: '{"secret":"secretSECRETsecretSECRETsecretSECRET", "port": 80, "postgres": {"connectionString": "postgres://postgres:password@postgres:5432/development"}}'
-#
-#  # main angular application
-#  client:
-#    image: strangesast/core_client
-#    build:
-#      context: .
-#      dockerfile: client/Dockerfile
-#    ports:
-#      - "8081:80"
-#
+  connector0:
+    image: strangesast/core_connector
+    restart: always
+    build:
+      context: machines
+    environment:
+      - MACHINE_ID=hardinge-gx1600
+      - KAFKA_HOSTS=kafka:9092
+      - ADAPTER_HOST=adapter0:7878
+    depends_on:
+      - 'kafka'
+
+  adapter0:
+    image: strangesast/mtconnect-adapter
+    restart: always
+    volumes:
+      - ./adapter0.ini:/adapter.ini
+
+  connector1:
+    image: strangesast/core_connector
+    restart: always
+    build:
+      context: machines
+    environment:
+      - MACHINE_ID=samsung-sl45
+      - KAFKA_HOSTS=kafka:9092
+      - ADAPTER_HOST=adapter1:7878
+    depends_on:
+      - 'kafka'
+
+  adapter1:
+    image: strangesast/mtconnect-adapter
+    restart: always
+    volumes:
+      - ./adapter1.ini:/adapter.ini
+
+  connector2:
+    image: strangesast/core_connector
+    restart: always
+    build:
+      context: machines
+    environment:
+      - MACHINE_ID=doosan-2600sy
+      - KAFKA_HOSTS=kafka:9092
+      - ADAPTER_HOST=adapter2:7878
+    depends_on:
+      - 'kafka'
+
+  adapter2:
+    image: strangesast/mtconnect-adapter
+    restart: always
+    volumes:
+      - ./adapter2.ini:/adapter.ini
+
+  connector3:
+    image: strangesast/core_connector
+    restart: always
+    build:
+      context: machines
+    environment:
+      - MACHINE_ID=doosan-gt2100m
+      - KAFKA_HOSTS=kafka:9092
+      - ADAPTER_HOST=adapter3:7881
+    depends_on:
+      - 'kafka'
+
+  adapter3:
+    image: strangesast/mtconnect-adapter
+    restart: always
+    volumes:
+      - ./adapter3.ini:/adapter.ini
+
+  connector4:
+    image: strangesast/core_connector
+    restart: always
+    build:
+      context: machines
+    environment:
+      - MACHINE_ID=samsung-mcv50
+      - KAFKA_HOSTS=kafka:9092
+      - ADAPTER_HOST=adapter4:7882
+    restart: always
+    depends_on:
+      - 'kafka'
+
+  adapter4:
+    image: strangesast/mtconnect-adapter
+    restart: always
+    volumes:
+      - ./adapter4.ini:/adapter.ini
+
+  timeclock:
+    image: strangesast/core-timeclock
+    restart: always
+    build:
+      context: timeclock
+    volumes:
+      - ./timeclock-config.ini:/app/config.ini
+
+  server:
+    image: strangesast/core_server
+    restart: always
+    build:
+      context: server
+    environment:
+      NODE_CONFIG: '{"secret":"secretSECRETsecretSECRETsecretSECRET", "port": 80, "postgres": {"connectionString": "postgres://postgres:password@postgres:5432/production"}}'
+
+  # main angular application
+  client:
+    image: strangesast/core_client
+    restart: always
+    build:
+      context: client
+
   # graphql server
   graphql-engine:
     image: hasura/graphql-engine
-    volumes:
-      - ./hasura/migrations:/hasura-migrations
-      - ./hasura/metadata:/hasura-metadata
+    restart: always
     ports:
     - "8080:8080"
-    depends_on:
-    - "postgres"
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/development"
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/production"
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: "startup, http-log, webhook-log, websocket-log, query-log"
@@ -135,20 +159,29 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: secretSECRETsecretSECRETsecretSECRET
       HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "secretSECRETsecretSECRETsecretSECRET"}'
 
+  hasura-metadata:
+    image: hasura/graphql-engine:latest.cli-migrations-v2
+    volumes:
+      - ./hasura/migrations:/hasura-migrations
+      - ./hasura/metadata:/hasura-metadata
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/production"
+
   # database
   postgres:
+    restart: always
     image: postgres
     volumes:
       - ./sql/:/docker-entrypoint-initdb.d/
       - db_data:/var/lib/postgresql/data
-    ports:
-    - "5432:5432"
     environment:
-      - DATABASE_NAME=development
+      - DATABASE_NAME=production
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
+
   pgadmin:
     image: dpage/pgadmin4
+    restart: always
     ports:
       - "8081:80"
     environment:
