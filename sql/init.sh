@@ -99,43 +99,78 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DATABASE_NAME" <<
   	FOREIGN KEY (sync_id) REFERENCES timeclock_sync (id)
   );
 
-  create materialized view timeclock_shifts_view as select
-  	id,
+  create view timeclock_shifts_view as select
   	employee_id,
+  	shift_num,
+    date,
   	date_start,
   	date_stop,
-  	shift_num
+  	duration,
+  	shift_ids,
+  	segments,
+  	max(row) as row
   from (
-  	select *,
-  		sum(case when nearby = true then 0 else 1 end) over (partition by employee_id order by num) as shift_num
+  	select
+  		*,
+  		rank() over (partition by g order by date_start asc) as row
   	from (
-  		select *,
-  			row_number() over (partition by employee_id order by date_start asc) num,
-  			case when prev_stop is NULL then false else ((date_start - prev_stop) < interval '6 hour') end as nearby
+  		select
+  			*,
+  			generate_series(
+  				floor(extract(epoch from date_start) / 54000)::integer,
+  				floor(extract(epoch from (case when date_stop is null then now() else date_stop end)) / 54000)::integer,
+  				54000
+  			) as g
   		from (
-  			select *,
-  				lag(date_stop, 1) over (partition by employee_id order by date_start asc) prev_stop
-  			from timeclock_shifts
+  			select
+  				employee_id,
+  				shift_num,
+  				min(date_start) as date_start,
+  				((min(date_start) at time zone 'utc') at time zone 'America/New_York')::date as date,
+  				max(date_stop) as date_stop,
+  				sum(duration) as duration,
+  				array_agg(id) as shift_ids,
+  				array_agg(array[date_start, date_stop]) as segments
+  			  from (
+  				select
+  					id,
+  					employee_id,
+  					date,
+  					date_start,
+  					date_stop,
+  					duration,
+  					sum(case when nearby = true THEN 0 ELSE 1 END) OVER (PARTITION BY t.employee_id ORDER BY t.num) AS shift_num
+  				from (
+  					select
+  						id,
+  						employee_id,
+  						date,
+  						date_start,
+  						date_stop,
+  						duration,
+  						num,
+  						case when (prev_stop is not null and (date_start - prev_stop) < interval '6 hours') then true else false end as nearby
+  					from (
+  						select
+  							id,
+  							employee_id,
+  							date,
+  							date_start,
+  							date_stop,
+  							(case when date_stop is null then now() else date_stop end) - date_start as duration,
+  							lag(date_stop, 1) over (partition by employee_id order by date_start) as prev_stop,
+  							row_number() OVER (PARTITION BY employee_id ORDER BY date_start) AS num
+  						from timeclock_shifts
+  						where (case when date_stop is null then now() else date_stop end) - date_start < interval '13 hours'
+  					) t
+  				) t
+  			  ) t
+  			  group by employee_id, shift_num
   		) t
   	) t
-  ) t order by date_start desc;
-
-  create materialized view timeclock_shift_groups as SELECT
-  	t.shift_num,
-  	t.employee_id,
-  	timezone('America/New_York'::text, t.dates_start[1]::timestamp with time zone)::date AS date,
-  	t.dates_start[1] AS date_start,
-  	t.dates_stop[array_upper(t.dates_stop, 1)] AS date_stop
-  FROM (
-  	SELECT
-  		employee_id,
-  		shift_num,
-  		array_agg(date_start order by date_start asc) AS dates_start,
-  		array_agg(date_stop order by date_stop asc) AS dates_stop
-  	FROM timeclock_shifts_view
-  	GROUP BY employee_id, shift_num
   ) t
-  ORDER BY (t.dates_start[1]) DESC;
+  group by employee_id, shift_num, date, date_start, date_stop, duration, shift_ids, segments
+  order by date_stop desc, date_start desc;
 
   create view timeclock_shifts_daily as select t.employee_id,
     t.date,
@@ -269,9 +304,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DATABASE_NAME" <<
     "value"      text not null,
     "offset"     bigint not null
   );
-
-  CREATE UNIQUE INDEX timeclock_shift_groups_pk
-    ON timeclock_shift_groups (employee_id, shift_num);
 
   CREATE TABLE schedule (
     col                    integer PRIMARY KEY,
