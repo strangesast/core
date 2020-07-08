@@ -27,8 +27,7 @@ services:
     image: strangesast/core_connect
     network_mode: "host"
     build:
-      context: .
-      dockerfile: docker/kafka-connect/Dockerfile
+      context: kafka/connect
 
 #  # facilitate timeclock polling
 #  celery:
@@ -40,8 +39,7 @@ services:
     image: strangesast/core_kafka-streams
     network_mode: "host"
     build:
-      context: .
-      dockerfile: docker/kafka-streams/Dockerfile
+      context: kafka/streams
     environment:
       - KAFKA_HOSTS=kafka:9092
       - STREAMS_APPLICATION_ID=streams-monitoring
@@ -49,8 +47,8 @@ services:
 #  connector0:
 #    image: strangesast/core_connector
 #    build:
-#      context: .
-#      dockerfile: docker/serial-monitoring/Dockerfile
+#      context: machines
+#      dockerfile: machines/Dockerfile
 #    environment:
 #      - MACHINE_ID=hardinge-gx1600
 #      - KAFKA_HOSTS=kafka:9092
@@ -62,8 +60,8 @@ services:
 #  connector1:
 #    image: strangesast/core_connector
 #    build:
-#      context: .
-#      dockerfile: docker/serial-monitoring/Dockerfile
+#      context: machines
+#      dockerfile: machines/Dockerfile
 #    environment:
 #      - MACHINE_ID=samsung-sl45
 #      - KAFKA_HOSTS=kafka:9092
@@ -75,8 +73,8 @@ services:
 #  connector2:
 #    image: strangesast/core_connector
 #    build:
-#      context: .
-#      dockerfile: docker/serial-monitoring/Dockerfile
+#      context: machines
+#      dockerfile: machines/Dockerfile
 #    environment:
 #      - MACHINE_ID=doosan-2600sy
 #      - KAFKA_HOSTS=kafka:9092
@@ -88,8 +86,8 @@ services:
 #  connector3:
 #    image: strangesast/core_connector
 #    build:
-#      context: .
-#      dockerfile: docker/serial-monitoring/Dockerfile
+#      context: machines
+#      dockerfile: machines/Dockerfile
 #    environment:
 #      - MACHINE_ID=doosan-gt2100m
 #      - KAFKA_HOSTS=kafka:9092
@@ -102,8 +100,8 @@ services:
 #  server:
 #    image: strangesast/core_server
 #    build:
-#      context: .
-#      dockerfile: docker/server/Dockerfile
+#      context: server
+#      dockerfile: server/Dockerfile
 #    ports:
 #      - "3001:80"
 #    environment:
@@ -114,7 +112,7 @@ services:
 #    image: strangesast/core_client
 #    build:
 #      context: .
-#      dockerfile: docker/client/Dockerfile
+#      dockerfile: client/Dockerfile
 #    ports:
 #      - "8081:80"
 #
