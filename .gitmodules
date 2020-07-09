@@ -22,3 +22,7 @@
 	path = machines
 	url = https://github.com/strangesast/core-machines
 	branch = dev
+[submodule "adapter"]
+	path = adapter
+	url = https://github.com/strangesast/mtconnect-adapter
+	branch = dev
