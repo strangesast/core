@@ -1,0 +1,28 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/strangesast/core-client
+	branch = master
+[submodule "server"]
+	path = server
+	url = https://github.com/strangesast/core-server
+	branch = master
+[submodule "timeclock"]
+	path = timeclock
+	url = https://github.com/strangesast/core-timeclock
+	branch = master
+[submodule "kafka"]
+	path = kafka
+	url = https://github.com/strangesast/core-kafka
+	branch = master
+[submodule "spreadsheets"]
+	path = spreadsheets
+	url = https://github.com/strangesast/core-import
+	branch = master
+[submodule "machines"]
+	path = machines
+	url = https://github.com/strangesast/core-machines
+	branch = master
+[submodule "adapter"]
+	path = adapter
+	url = https://github.com/strangesast/mtconnect-adapter
+	branch = master

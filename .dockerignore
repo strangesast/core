@@ -1,0 +1,11 @@
+timeclock-vis/docker
+.git
+docker-compose.yml
+**/Dockerfile
+**/env/
+**/node_modules
+**/__pycache__
+**/*.pyc
+monitoring/monitoring
+docker/
+serial-monitoring-processor/build
