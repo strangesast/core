@@ -1,180 +1,30 @@
 version: '3.7'
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    restart: always
-
-  kafka:
-    image: wurstmeister/kafka
-    restart: always
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "input-text:5:1"
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ADVERTISED_PORT: 9092
-    volumes:
-      - kafka_data:/kafka
-
-  connector0:
-    image: strangesast/core_connector
-    restart: always
-    build:
-      context: machines
-    environment:
-      - MACHINE_ID=hardinge-gx1600
-      - KAFKA_HOSTS=kafka:9092
-      - ADAPTER_HOST=adapter0:7878
-    depends_on:
-      - 'kafka'
-
-  adapter0:
-    image: strangesast/mtconnect-adapter
-    restart: always
-    build:
-      context: adapter
-    volumes:
-      - adapter_logs:/var/log/adapter
-    environment:
-      - FOCAS_SERVICE_NAME=hardinge-gx1600
-      - FOCAS_HOST=10.0.0.200
-
-  connector1:
-    image: strangesast/core_connector
-    restart: always
-    build:
-      context: machines
-    environment:
-      - MACHINE_ID=samsung-sl45
-      - KAFKA_HOSTS=kafka:9092
-      - ADAPTER_HOST=adapter1:7878
-    depends_on:
-      - 'kafka'
-
-  adapter1:
-    image: strangesast/mtconnect-adapter
-    restart: always
-    build:
-      context: adapter
-    volumes:
-      - adapter_logs:/var/log/adapter
-    environment:
-      - FOCAS_SERVICE_NAME=samsung-sl45
-      - FOCAS_HOST=10.0.0.207
-
-  connector2:
-    image: strangesast/core_connector
-    restart: always
-    build:
-      context: machines
-    environment:
-      - MACHINE_ID=doosan-2600sy
-      - KAFKA_HOSTS=kafka:9092
-      - ADAPTER_HOST=adapter2:7878
-    depends_on:
-      - 'kafka'
-
-  adapter2:
-    image: strangesast/mtconnect-adapter
-    restart: always
-    build:
-      context: adapter
-    volumes:
-      - adapter_logs:/var/log/adapter
-    environment:
-      - FOCAS_SERVICE_NAME=doosan-2600sy
-      - FOCAS_HOST=10.0.0.208
-
-  connector3:
-    image: strangesast/core_connector
-    restart: always
-    build:
-      context: machines
-    environment:
-      - MACHINE_ID=doosan-gt2100m
-      - KAFKA_HOSTS=kafka:9092
-      - ADAPTER_HOST=adapter3:7878
-    depends_on:
-      - 'kafka'
-
-  adapter3:
-    image: strangesast/mtconnect-adapter
-    restart: always
-    build:
-      context: adapter
-    volumes:
-      - adapter_logs:/var/log/adapter
-    environment:
-      - FOCAS_SERVICE_NAME=doosan-gt2100m
-      - FOCAS_HOST=10.0.0.209
-
-  connector4:
-    image: strangesast/core_connector
-    restart: always
-    build:
-      context: machines
-    environment:
-      - MACHINE_ID=samsung-mcv50
-      - KAFKA_HOSTS=kafka:9092
-      - ADAPTER_HOST=adapter4:7878
-    restart: always
-    depends_on:
-      - 'kafka'
-
-  adapter4:
-    image: strangesast/mtconnect-adapter
-    restart: always
-    build:
-      context: adapter
-    volumes:
-      - adapter_logs:/var/log/adapter
-    environment:
-      - FOCAS_SERVICE_NAME=samsung-mcv50
-      - FOCAS_HOST=10.0.0.206
-
   connect:
     image: strangesast/core_connect
-    restart: always
+    network_mode: host
     build:
       context: kafka/connect
-
-  kafka-streams:
-    image: strangesast/core_kafka-streams
-    restart: always
-    build:
-      context: kafka/streams
     environment:
-      - KAFKA_HOSTS=kafka:9092
-      - STREAMS_APPLICATION_ID=streams-monitoring
+      DATABASE_URL: "postgresql://localhost:5432/development"
+      KAFKA_HOSTS: "localhost:9092"
+      FLUSH_INTERVAL: 1000
 
-  timeclock:
-    image: strangesast/core-timeclock
-    restart: always
-    build:
-      context: timeclock
-    volumes:
-      - ./timeclock-config.ini:/app/config.ini
-
-  server:
-    image: strangesast/core_server
-    restart: always
-    build:
-      context: server
-    environment:
-      NODE_CONFIG: '{"secret":"secretSECRETsecretSECRETsecretSECRET", "port": 80, "postgres": {"connectionString": "postgres://postgres:password@postgres:5432/production"}}'
-
-  client:
-    image: strangesast/core_client
-    restart: always
-    ports:
-      - "80:80"
-    build:
-      context: client
+#  kafka-streams:
+#    image: strangesast/core_kafka-streams
+#    network_mode: host
+#    build:
+#      context: kafka/streams
+#    environment:
+#      - KAFKA_HOSTS=kafka:9092
+#      - STREAMS_APPLICATION_ID=streams-monitoring-dev
 
   graphql:
     image: hasura/graphql-engine
-    restart: always
+    ports:
+      - "8080:8080"
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/production"
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/development"
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: "startup, http-log, webhook-log, websocket-log, query-log"
@@ -188,22 +38,24 @@ services:
       - ./hasura/migrations:/hasura-migrations
       - ./hasura/metadata:/hasura-metadata
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/production"
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/development"
 
   postgres:
     image: postgres
-    restart: always
+    ports:
+      - "5432:5432"
     volumes:
       - ./sql/:/docker-entrypoint-initdb.d/
       - db_data:/var/lib/postgresql/data
     environment:
-      - DATABASE_NAME=production
+      - DATABASE_NAME=development
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
 
   pgadmin:
     image: dpage/pgadmin4
-    restart: always
+    ports:
+      - "8081:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin
       - PGADMIN_DEFAULT_PASSWORD=password
@@ -211,11 +63,7 @@ services:
       - pgadmin_data:/var/lib/pgadmin
 
 volumes:
-  adapter_logs:
   db_data:
     external: true
     name: core_db_data
-  kafka_data:
-    external: true
-    name: core_kafka_data
   pgadmin_data:
