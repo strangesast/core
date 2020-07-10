@@ -3,5 +3,5 @@
 docker run --rm -it --network=core_default wurstmeister/kafka /opt/kafka/bin/kafka-console-consumer.sh \
   --from-beginning \
   --property print.key=true \
-  --bootstrap-server kafka:9092 \
+  --bootstrap-server kafka:29092 \
   --topic ${1:-input-text}
