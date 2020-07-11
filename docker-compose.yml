@@ -167,13 +167,22 @@ services:
     environment:
       NODE_CONFIG: '{"secret":"secretSECRETsecretSECRETsecretSECRET", "port": 80, "postgres": {"connectionString": "postgres://postgres:password@postgres:5432/production"}}'
 
-  client:
-    image: strangesast/core_client
+  nginx:
+    image: strangesast/core_nginx
     restart: always
+    build:
+      context: nginx
     ports:
       - "80:80"
+    volumes:
+      - client_build:/usr/share/nginx/html
+
+  client:
+    image: strangesast/core_client
     build:
       context: client
+    volumes:
+      - client_build:/build
 
   graphql:
     image: hasura/graphql-engine
@@ -215,12 +224,23 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
+  gogs:
+    image: gogs/gogs
+    ports:
+      - "2222:22"
+    volumes:
+      - gogs_data:/data
+
 volumes:
-  adapter_logs:
-  db_data:
+#  adapter_logs:
+  client_build:
+#  pgadmin_data:
+#  db_data:
+#    external: true
+#    name: core_db_data
+#  kafka_data:
+#    external: true
+#    name: core_kafka_data
+  gogs_data:
     external: true
-    name: core_db_data
-  kafka_data:
-    external: true
-    name: core_kafka_data
-  pgadmin_data:
+    name: core_gogs_data
