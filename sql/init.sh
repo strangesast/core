@@ -4,9 +4,20 @@ set -e
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
   CREATE DATABASE $DATABASE_NAME;
   GRANT ALL PRIVILEGES ON DATABASE $DATABASE_NAME TO postgres;
+
+  CREATE USER odoo WITH PASSWORD 'odoo';
+  CREATE DATABASE odoo OWNER odoo;
 EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DATABASE_NAME" <<-EOSQL
+  CREATE ROLE readaccess;
+  GRANT USAGE ON SCHEMA public TO readaccess;
+  GRANT SELECT ON ALL TABLES IN SCHEMA public TO readaccess;
+  ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readaccess;
+
+  CREATE USER "user" with password 'password';
+  GRANT readaccess TO "user";
+
   CREATE EXTENSION pgcrypto;
   
   CREATE TABLE roles (
