@@ -71,12 +71,10 @@ services:
 
   jupyter:
     image: jupyter/datascience-notebook
-    ports:
-      - "8888:8888"
-    environment:
-      - NB_USER=user
+    entrypoint: jupyter notebook
+    command: --ip=0.0.0.0 --no-browser --port 8888 --NotebookApp.token='secret'  --NotebookApp.password='' --NotebookApp.allow_origin='*' --notebook-dir=/home/jovyan/notebooks --NotebookApp.base_url=/jupyter
     volumes:
-      - jupyter_data:/home/user/work
+      - jupyter_data:/home/jovyan/notebooks
 
 volumes:
   client_build:
