@@ -143,6 +143,10 @@ services:
     restart: always
     build:
       context: kafka/connect
+    environment:
+      - KAFKA_HOSTS=kafka:29092
+      - DATABASE_URL=postgresql://postgres:5432/production
+      - FLUSH_INTERVAL=1000
 
   kafka-streams:
     image: strangesast/core_kafka-streams
@@ -228,21 +232,31 @@ services:
 
   gogs:
     image: gogs/gogs
+    restart: always
     ports:
       - "2222:22"
     volumes:
       - gogs_data:/data
 
+  jupyter:
+    image: jupyter/datascience-notebook
+    restart: always
+    environment:
+      - NB_USER=user
+    volumes:
+      - jupyter_data:/home/user/work
+
 volumes:
   adapter_logs:
   client_build:
   pgadmin_data:
+  jupyter_data:
+  gogs_data:
+    external: true
+    name: core_gogs_data
   db_data:
     external: true
     name: core_db_data
   kafka_data:
     external: true
     name: core_kafka_data
-  gogs_data:
-    external: true
-    name: core_gogs_data
