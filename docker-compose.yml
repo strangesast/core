@@ -1,14 +1,14 @@
 version: '3.7'
 services:
-  connect:
-    image: strangesast/core_connect
-    network_mode: host
-    build:
-      context: kafka/connect
-    environment:
-      DATABASE_URL: "postgresql://localhost:5432/development"
-      KAFKA_HOSTS: "localhost:9092"
-      FLUSH_INTERVAL: 1000
+#  connect:
+#    image: strangesast/core_connect
+#    network_mode: host
+#    build:
+#      context: kafka/connect
+#    environment:
+#      DATABASE_URL: "postgresql://localhost:5432/development"
+#      KAFKA_HOSTS: "localhost:9092"
+#      FLUSH_INTERVAL: 1000
 
 #  kafka-streams:
 #    image: strangesast/core_kafka-streams
@@ -19,10 +19,15 @@ services:
 #      - KAFKA_HOSTS=kafka:9092
 #      - STREAMS_APPLICATION_ID=streams-monitoring-dev
 
+  nginx:
+    build:
+      context: nginx
+      dockerfile: dev.Dockerfile
+    ports:
+      - "8080:80"
+
   graphql:
     image: hasura/graphql-engine
-    ports:
-      - "8080:8080"
     environment:
       HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/development"
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
@@ -54,8 +59,6 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    ports:
-      - "8081:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin
       - PGADMIN_DEFAULT_PASSWORD=password
@@ -70,9 +73,8 @@ services:
       - gogs_data:/data
 
   jupyter:
-    image: jupyter/datascience-notebook
-    entrypoint: jupyter notebook
-    command: --ip=0.0.0.0 --no-browser --port 8888 --NotebookApp.token='secret'  --NotebookApp.password='' --NotebookApp.allow_origin='*' --notebook-dir=/home/jovyan/notebooks --NotebookApp.base_url=/jupyter
+    build:
+      context: jupyter
     volumes:
       - jupyter_data:/home/jovyan/notebooks
 
