@@ -60,6 +60,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     environment:
+      - PGADMIN_LISTEN_PORT=8080
       - PGADMIN_DEFAULT_EMAIL=admin
       - PGADMIN_DEFAULT_PASSWORD=password
     volumes:
@@ -76,12 +77,11 @@ services:
     build:
       context: jupyter
     volumes:
-      - jupyter_data:/home/jovyan/notebooks
+      - ./notebooks:/home/jovyan/work
 
 volumes:
   client_build:
   pgadmin_data:
-  jupyter_data:
   db_data:
     external: true
     name: core_db_data
