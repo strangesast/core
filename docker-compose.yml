@@ -178,6 +178,7 @@ services:
     restart: always
     build:
       context: nginx
+      dockerfile: Dockerfile
     ports:
       - "80:80"
     volumes:
@@ -244,7 +245,7 @@ services:
     build:
       context: jupyter
     volumes:
-      - jupyter_data:/home/jovyan/notebooks
+      - ./notebooks:/home/jovyan/work
 
   odoo:
     image: odoo        
@@ -260,7 +261,6 @@ volumes:
   adapter_logs:
   client_build:
   pgadmin_data:
-  jupyter_data:
   gogs_data:
     external: true
     name: core_gogs_data

@@ -6,4 +6,4 @@ run apt-get update && \
   pip install psycopg2 seaborn pandas
 
 volume /home/jovyan/work
-entrypoint ["jupyter", "notebook", "--allow-root", "--ip=0.0.0.0", "--no-browser", "--port", "8888", "--NotebookApp.token='secret'", "--NotebookApp.password=''", "--NotebookApp.allow_origin='*'", "--notebook-dir=/home/jovyan/work", "--NotebookApp.base_url=/jupyter"]
+entrypoint ["jupyter", "notebook", "--allow-root", "--ip=0.0.0.0", "--no-browser", "--port", "8888", "--NotebookApp.token='secret'", "--NotebookApp.password=''", "--NotebookApp.allow_origin='*'", "--notebook-dir=/home/jovyan/work", "--NotebookApp.base_url=/jupyter/"]
