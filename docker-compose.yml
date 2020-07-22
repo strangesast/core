@@ -5,13 +5,18 @@ services:
     restart: always
     ports:
       - "2181:2181"
+    volumes:
+      - zookeeper_data:/opt/zookeeper-3.4.13/data
+      - zookeeper_log:/opt/zookeeper-3.4.13/conf
 
   kafka:
     image: wurstmeister/kafka
     restart: always
     environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG_DIRS: /kafka/logs-1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "input-text:5:1"
+      KAFKA_CREATE_TOPICS: "input-text:6:1,machine_values:6:1,machine_state:6:1"
       KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -20,10 +25,10 @@ services:
     ports:
       - "9092:9092"
     volumes:
-      - kafka_data:/kafka
+      - kafka_data:/kafka/logs-1
 
   connector0:
-    image: strangesast/core_connector
+    image: strangesast/core_machines
     restart: always
     build:
       context: machines
@@ -46,7 +51,7 @@ services:
       - FOCAS_HOST=10.0.0.200
 
   connector1:
-    image: strangesast/core_connector
+    image: strangesast/core_machines
     restart: always
     build:
       context: machines
@@ -69,7 +74,7 @@ services:
       - FOCAS_HOST=10.0.0.207
 
   connector2:
-    image: strangesast/core_connector
+    image: strangesast/core_machines
     restart: always
     build:
       context: machines
@@ -92,7 +97,7 @@ services:
       - FOCAS_HOST=10.0.0.208
 
   connector3:
-    image: strangesast/core_connector
+    image: strangesast/core_machines
     restart: always
     build:
       context: machines
@@ -115,7 +120,7 @@ services:
       - FOCAS_HOST=10.0.0.209
 
   connector4:
-    image: strangesast/core_connector
+    image: strangesast/core_machines
     restart: always
     build:
       context: machines
@@ -256,6 +261,8 @@ services:
     restart: always
     volumes:
       - odoo_data:/var/lib/odoo
+    ports:
+      - "8069:8069"
     environment:
       - HOST=postgres
       - USER=odoo
@@ -275,3 +282,9 @@ volumes:
   kafka_data:
     external: true
     name: core_kafka_data
+  zookeeper_data:
+    external: true
+    name: core_zookeeper_data
+  zookeeper_log:
+    external: true
+    name: core_zookeeper_log
