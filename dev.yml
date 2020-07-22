@@ -66,13 +66,6 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
-  gogs:
-    image: gogs/gogs
-    ports:
-      - "2222:22"
-    volumes:
-      - gogs_data:/data
-
   jupyter:
     build:
       context: jupyter
@@ -85,6 +78,3 @@ volumes:
   db_data:
     external: true
     name: core_db_data
-  gogs_data:
-    external: true
-    name: core_gogs_data
