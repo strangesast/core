@@ -17,8 +17,7 @@ export enum ComponentType {
 }
 
 export enum OperationState {
-  Complete = "complete",
-  Incomplete = "incomplete",
+  Complete = "complete", Incomplete = "incomplete",
 }
 
 export enum OperationType {
@@ -63,7 +62,7 @@ export interface IOperationDataBase {
 
 export interface IOperationDataGather extends IOperationDataBase {
   type: OperationType.Gather | OperationType.Assemble | OperationType.Weld;
-  components: string[];
+  components: (IComponentInstance|string)[];
 }
 
 export interface IOperationDataGeneric extends IOperationDataBase {}
@@ -73,26 +72,41 @@ export type IOperationData = IOperationDataGather | IOperationDataGeneric;
 export interface IOperationInstance extends IDatum {
   id: string;
   type: DatumType.Operation;
+  proto: IOperation | string;
   template?: string;
   description: string;
   data: IOperationData;
 }
 
-export interface IComponentData {
+export interface IComponentInstanceData {
   type: ComponentType;
-  operations: string[];
-  lastOperation: string;
+  operations?: (IOperationInstance | string)[];
+  lastOperation?: string;
 }
 
 export interface IComponentInstance extends IDatum {
   id: string;
   type: DatumType.Component;
+  proto: IComponent | string;
   name: string;
-  data: IComponentData;
+  data: IComponentInstanceData;
 }
 
 export interface ICustomer extends IDatum {
   id: string;
   type: DatumType.Customer;
   name: string;
+}
+
+export interface IOperation {
+  id: string;
+  type: OperationType;
+  prerequisites?: string[];
+}
+
+export interface IComponent {
+  id: string;
+  name: string;
+  operations?: IOperation[];
+  subcomponents?: IComponent[];
 }
