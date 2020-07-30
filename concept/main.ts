@@ -63,8 +63,8 @@ const machinedPiston: IComponent = {
 };
 
 const stockPistonRod: IComponent = {
-  id: "stock_piston",
-  name: "Stock Piston",
+  id: "stock_piston_rod",
+  name: "Stock Piston Rod",
   operations: orderDeliverOperations,
 };
 
@@ -105,6 +105,7 @@ const cutBody: IComponent = {
 const machinedBody: IComponent = {
   id: "machined_body",
   name: "Machined Body",
+  operations: [{ id: "machining_op_1", type: OperationType.Machine }],
   subcomponents: [cutBody],
 };
 
