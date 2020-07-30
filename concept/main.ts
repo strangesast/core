@@ -31,22 +31,21 @@ const operationAreas: Array<IOperationArea> = [
   color: COLORS[i],
 }));
 
+const orderDeliverOperations = [
+  { id: "order", type: OperationType.Order },
+  { id: "deliver", type: OperationType.Deliver, prerequisites: ["order"] },
+];
+
 const sealKit: IComponent = {
   id: "seal_kit",
   name: "Seal Kit",
-  operations: [
-    { id: "order", type: OperationType.Order },
-    { id: "deliver", type: OperationType.Deliver },
-  ],
+  operations: orderDeliverOperations,
 };
 
 const stockPiston: IComponent = {
   id: "stock_piston",
   name: "Stock Piston",
-  operations: [
-    { id: "order", type: OperationType.Order },
-    { id: "deliver", type: OperationType.Deliver },
-  ],
+  operations: orderDeliverOperations,
 };
 
 const cutPiston: IComponent = {
@@ -66,10 +65,7 @@ const machinedPiston: IComponent = {
 const stockPistonRod: IComponent = {
   id: "stock_piston",
   name: "Stock Piston",
-  operations: [
-    { id: "order", type: OperationType.Order },
-    { id: "deliver", type: OperationType.Deliver },
-  ],
+  operations: orderDeliverOperations,
 };
 
 const cutPistonRod: IComponent = {
@@ -96,10 +92,7 @@ const pistonAssembly: IComponent = {
 const stockBody: IComponent = {
   id: "stock_body",
   name: "Stock Body",
-  operations: [
-    { id: "order", type: OperationType.Order },
-    { id: "deliver", type: OperationType.Deliver },
-  ],
+  operations: orderDeliverOperations,
 };
 
 const cutBody: IComponent = {
@@ -115,10 +108,17 @@ const machinedBody: IComponent = {
   subcomponents: [cutBody],
 };
 
+const stockHead: IComponent = {
+  id: "stock_head",
+  name: "Stock Head",
+  operations: orderDeliverOperations,
+};
+
 const cutHead: IComponent = {
   id: "cut_head",
   name: "Cut Head",
-  subcomponents: [],
+  operations: [{id: "cut_op_1", type: OperationType.Cut}],
+  subcomponents: [stockHead],
 };
 
 const machinedHead: IComponent = {
@@ -138,6 +138,7 @@ const weldedBody: IComponent = {
 const topAssembly: IComponent = {
   id: "top_assembly",
   name: "Top Assembly",
+  operations: [{ id: "assembly_operation_1", type: OperationType.Assemble }],
   subcomponents: [weldedBody, pistonAssembly, sealKit],
 };
 
@@ -215,4 +216,4 @@ function flatten(instance: IComponentInstance) {
   return { components, instances, operations };
 }
 
-await writeJson("./data.json", topAssembly, { spaces: 2 });
+await writeJson("./data.json", {components: topAssembly, areas: operationAreas}, { spaces: 2 });
