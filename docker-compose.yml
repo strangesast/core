@@ -171,11 +171,21 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     restart: always
+    ports:
+      - "8090:80"
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin
-      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_DEFAULT_EMAIL=admin@admin
+      - PGADMIN_DEFAULT_PASSWORD=PasswordPassword123123
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+
+  autoheal:
+    restart: always
+    image: willfarrell/autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   adapter_logs:
