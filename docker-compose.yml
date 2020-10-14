@@ -157,59 +157,6 @@ services:
       - KAFKA_HOSTS=kafka:29092
       - STREAMS_APPLICATION_ID=streams-monitoring
 
-  timeclock:
-    image: strangesast/core-timeclock
-    restart: always
-    build:
-      context: timeclock
-    volumes:
-      - ./timeclock-config.ini:/app/config.ini
-
-  server:
-    image: strangesast/core_server
-    restart: always
-    build:
-      context: server
-    environment:
-      NODE_CONFIG: '{"secret":"secretSECRETsecretSECRETsecretSECRET", "port": 80, "postgres": {"connectionString": "postgres://postgres:password@postgres:5432/production"}}'
-
-  nginx:
-    image: strangesast/core_nginx
-    restart: always
-    build:
-      context: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - client_build:/usr/share/nginx/html
-
-  client:
-    image: strangesast/core_client
-    build:
-      context: client
-    volumes:
-      - client_build:/build
-
-  graphql:
-    image: hasura/graphql-engine
-    restart: always
-    environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/production"
-      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES: "startup, http-log, webhook-log, websocket-log, query-log"
-      HASURA_GRAPHQL_ENABLED_APIS: "metadata, graphql, pgdump"
-      HASURA_GRAPHQL_ADMIN_SECRET: secretSECRETsecretSECRETsecretSECRET
-      HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "secretSECRETsecretSECRETsecretSECRET"}'
-
-  hasura-metadata:
-    image: hasura/graphql-engine:latest.cli-migrations-v2
-    volumes:
-      - ./hasura/migrations:/hasura-migrations
-      - ./hasura/metadata:/hasura-metadata
-    environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:password@postgres:5432/production"
-
   postgres:
     image: postgres
     restart: always
@@ -230,33 +177,8 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
-  gogs:
-    image: gogs/gogs
-    restart: always
-    ports:
-      - "2222:22"
-    volumes:
-      - gogs_data:/data
-
-  jupyter:
-    image: jupyter/datascience-notebook
-    restart: always
-    environment:
-      - NB_USER=user
-    volumes:
-      - jupyter_data:/home/user/work
-
 volumes:
   adapter_logs:
-  client_build:
   pgadmin_data:
-  jupyter_data:
-  gogs_data:
-    external: true
-    name: core_gogs_data
   db_data:
-    external: true
-    name: core_db_data
   kafka_data:
-    external: true
-    name: core_kafka_data
