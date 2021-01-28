@@ -194,9 +194,8 @@ services:
   client:
     image: strangesast/core_client
     build:
-      context: client
-    volumes:
-      - client_build:/build
+      context: .
+      dockerfile: docker/client/Dockerfile
 
   graphql:
     image: hasura/graphql-engine
