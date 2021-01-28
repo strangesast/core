@@ -1,0 +1,30 @@
+:host {
+  display: grid;
+  height: 100%;
+
+  & > div {
+    h1 a {
+      color: inherit;
+    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &.active {
+      background-color: green;
+    }
+    &.ready {
+      background-color: yellow;
+    }
+    &.stopped {
+      background-color: red;
+    }
+    &.interrupted {
+      background-color: blue;
+      color: white;
+    }
+    &.unavailable {
+      background-color: lightgrey;
+    }
+    padding: 16px;
+  }
+}

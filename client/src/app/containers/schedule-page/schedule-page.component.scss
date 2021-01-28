@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+:host .container {
+  overflow: auto;
+  width: 100%;
+}
+.mat-cell,
+.mat-header-cell,
+.mat-footer-cell {
+  min-width: 80px;
+  text-align: center;
+  // border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+.mat-table-sticky:first-child {
+  padding-right: 8px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+.mat-header-cell {
+  padding: 20px 0;
+}
+.mat-header-cell span {
+  display: block;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  padding: 0 8px;
+}

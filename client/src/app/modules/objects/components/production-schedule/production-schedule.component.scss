@@ -1,0 +1,13 @@
+.header-note {
+  font-style: italic;
+  & ~ .header-note {
+    padding-left: 0;
+    &:before {
+      content: ", ";
+    }
+  }
+}
+
+section {
+  padding: 16px;
+}

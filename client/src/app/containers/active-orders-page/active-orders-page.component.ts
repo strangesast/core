@@ -1,0 +1,129 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { Apollo, gql } from 'apollo-angular';
+import { Subject } from 'rxjs';
+import { pluck, takeUntil } from 'rxjs/operators';
+
+const QUERY = gql`
+  query ScheduleQuery {
+    schedule {
+      col
+      customer
+      date
+      description
+      part
+      qty
+      readystate
+      qty_note
+      sos
+    }
+  }
+`;
+
+const COLUMNS = [
+  'part',
+  'customer',
+  'description',
+  'date',
+  'qty',
+  'qty_note',
+  'sos',
+];
+
+@Component({
+  selector: 'app-active-orders-page',
+  template: `
+    <app-page-title>
+      <a [routerLink]="['/orders']">Orders</a>
+    </app-page-title>
+    <header>
+      <h1>Active Orders</h1>
+      <ul>
+        <li><a [routerLink]="['/orders', 'historical']">Historical</a></li>
+      </ul>
+    </header>
+    <div class="table-container">
+      <mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="part" sticky>
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            Part Name
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell"
+            ><a [routerLink]="['/parts', cell.part]">
+              {{ cell.part }}
+            </a></mat-cell
+          >
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            Description
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell"> {{ cell.description }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="customer">
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            Customer
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell"
+            ><a [routerLink]="['/customers', cell.customer]">
+              {{ cell.customer }}
+            </a></mat-cell
+          >
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            Date
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell"> {{ cell.date }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="qty">
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            Qty
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell"> {{ cell.qty }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="qty_note">
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            Qty Note
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell"> {{ cell.qty_note }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="sos">
+          <mat-header-cell mat-sort-header *matHeaderCellDef>
+            SOs
+          </mat-header-cell>
+          <mat-cell *matCellDef="let cell" class="list"
+            ><a [routerLink]="['/']" *ngFor="let so of cell.sos">{{
+              so
+            }}</a></mat-cell
+          >
+        </ng-container>
+        <mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      </mat-table>
+    </div>
+  `,
+  styleUrls: ['../../styles/base.scss', './active-orders-page.component.scss'],
+})
+export class ActiveOrdersPageComponent implements OnInit, OnDestroy {
+  displayedColumns = COLUMNS;
+
+  dataSource = new MatTableDataSource();
+  destroyed$ = new Subject();
+  data$ = this.apollo.query({ query: QUERY }).pipe(pluck('data'));
+
+  constructor(public apollo: Apollo) {}
+
+  ngOnInit(): void {
+    this.data$
+      .pipe(takeUntil(this.destroyed$), pluck('schedule'))
+      .subscribe((data: any[]) => (this.dataSource.data = data));
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+}

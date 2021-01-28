@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  border: solid 1px #ccc;
+  border-radius: 8px;
+  max-width: 800px;
+  margin-bottom: 12px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 60px;
+  background: white;
+  border-radius: 8px 8px 0 0;
+  padding: 0 16px;
+
+  & > *:not(:first-child) {
+    padding-left: 12px;
+  }
+  & > .sub ~ .sub {
+    padding-left: 0;
+  }
+
+  .sub {
+    font-style: italic;
+    & ~ .sub:before {
+      content: ", ";
+    }
+  }
+}
+
+:host.minimized > .header {
+  border-radius: 8px;
+}
+
+.content {
+  overflow: hidden;
+
+  & > div {
+    padding: 12px;
+    box-sizing: border-box;
+    background: #f7f7f7;
+    border-radius: 0 0 8px 8px;
+    display: grid;
+    grid-gap: 12px;
+
+    .sub-header {
+      padding: 12px 0;
+    }
+  }
+}

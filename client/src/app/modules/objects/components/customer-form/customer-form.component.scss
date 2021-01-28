@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  form {
+    display: grid;
+    grid-gap: 12px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+    & > * {
+      min-width: 0;
+    }
+    .name {
+      grid-column: auto / span 4;
+    }
+    .address-city,
+    .address-line1,
+    .address-line2 {
+      grid-column: auto / span 2;
+    }
+    .contact {
+      grid-column: auto / span 3;
+    }
+  }
+}
