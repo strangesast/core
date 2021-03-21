@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 
+import { MaterialModule } from '../material.module';
 import {
   MachinesPageComponent,
   MachinesListComponent,
@@ -11,18 +13,18 @@ import {
 import { MapViewerComponent } from './components/map-viewer/map-viewer.component';
 import { MachinePageComponent } from './containers/machine-page/machine-page.component';
 import { SharedModule } from '../shared/shared.module';
-import { MaterialModule } from '../material.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { MachinesNewPageComponent } from './containers/machines-new-page/machines-new-page.component';
 
 const routes: Routes = [
   {
     path: '',
     component: MachinesPageComponent,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'map' },
+      { path: '', pathMatch: 'full', redirectTo: 'list' },
       { path: 'map', component: MachinesMapComponent },
       { path: 'list', component: MachinesListComponent },
       { path: 'grid', component: MachinesGridComponent },
+      { path: 'new', component: MachinesNewPageComponent },
     ],
   },
   { path: ':id', component: MachinePageComponent },
@@ -36,6 +38,7 @@ const routes: Routes = [
     MachinesMapComponent,
     MachinePageComponent,
     MapViewerComponent,
+    MachinesNewPageComponent,
   ],
   imports: [
     CommonModule,

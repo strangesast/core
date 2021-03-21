@@ -30,13 +30,7 @@ const query = gql`
     <app-page-title>
       <a [routerLink]="['/machines']">Machines</a>
     </app-page-title>
-    <header>
-      <h1>3+ Machines Active</h1>
-      <p>
-        4% Utilization this Week
-        <a [routerLink]="['/machine-status']">Status Page</a>
-      </p>
-    </header>
+    <!--
     <div class="controls">
       <span class="flex-spacer"></span>
       <mat-button-toggle-group>
@@ -63,6 +57,7 @@ const query = gql`
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
+    -->
     <router-outlet></router-outlet>
   `,
   styleUrls: ['../../../../styles/base.scss', './machines-page.component.scss'],
@@ -102,6 +97,9 @@ export class MachinesMapComponent extends MachinesBaseComponent {}
 @Component({
   selector: 'app-machines-list',
   template: `
+    <a [routerLink]="['./new']" mat-flat-button color="primary"
+      >Add New Machine</a
+    >
     <mat-table [dataSource]="dataSource" matSort>
       <ng-container matColumnDef="name">
         <mat-cell *matCellDef="let cell">
